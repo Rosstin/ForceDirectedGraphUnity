@@ -1,0 +1,45 @@
+Base path: C:/Program Files/Unity524/Editor/Data
+Pipe name: \\.\pipe\UnityShaderCompiler-64bit-1-8664
+Cmd: getPlatforms
+Cmd: preprocess
+  insize=948 outsize=336 ok=1
+Cmd: compileSnippet
+  api=4 type=0 insize=911 outsize=1656 kw=LEAP_FORMAT_IR pd= ok=1
+Cmd: compileSnippet
+  api=4 type=1 insize=911 outsize=1997 kw=LEAP_FORMAT_IR pd= ok=1
+Cmd: preprocess
+  insize=4147 outsize=1124 ok=1
+Cmd: compileSnippet
+  api=4 type=0 insize=3330 outsize=2200 kw=LEAP_FORMAT_IR pd= ok=1
+Cmd: compileSnippet
+  api=4 type=1 insize=3330 outsize=2029 kw=LEAP_FORMAT_IR pd= ok=1
+Cmd: compileSnippet
+  api=4 type=0 insize=3325 outsize=2200 kw=LEAP_FORMAT_IR pd= ok=1
+Cmd: compileSnippet
+  api=4 type=1 insize=3325 outsize=3321 kw=LEAP_FORMAT_IR pd= ok=1
+Cmd: preprocess
+  insize=1342 outsize=543 ok=1
+Cmd: compileSnippet
+  api=4 type=0 insize=1098 outsize=1656 kw=LEAP_FORMAT_IR pd= ok=1
+Cmd: compileSnippet
+  api=4 type=1 insize=1098 outsize=2631 kw=LEAP_FORMAT_IR pd= ok=1
+Cmd: preprocess
+  insize=906 outsize=294 ok=1
+Cmd: compileSnippet
+  api=4 type=0 insize=909 outsize=1656 kw=LEAP_FORMAT_IR pd= ok=1
+Cmd: compileSnippet
+  api=4 type=1 insize=909 outsize=1997 kw=LEAP_FORMAT_IR pd= ok=1
+Cmd: preprocess
+  insize=824 outsize=821 ok=1
+Cmd: compileSnippet
+  api=4 type=0 insize=13030 outsize=11024 kw=UNITY_COLORSPACE_GAMMA _SUNDISK_SIMPLE pd= ok=1
+Cmd: compileSnippet
+  api=4 type=1 insize=13030 outsize=1899 kw=UNITY_COLORSPACE_GAMMA _SUNDISK_SIMPLE pd= ok=1
+Cmd: compileSnippet
+  api=4 type=0 insize=751 outsize=3533 kw=SHADOWS_DEPTH pd= ok=1
+Cmd: compileSnippet
+  api=4 type=1 insize=751 outsize=380 kw=SHADOWS_DEPTH pd= ok=1
+Cmd: compileSnippet
+  api=4 type=0 insize=982 outsize=4337 kw=DIRECTIONAL SHADOWS_SCREEN LIGHTMAP_OFF DIRLIGHTMAP_OFF DYNAMICLIGHTMAP_OFF pd= ok=1
+Cmd: compileSnippet
+  api=4 type=1 insize=982 outsize=10926 kw=DIRECTIONAL SHADOWS_SCREEN LIGHTMAP_OFF DIRLIGHTMAP_OFF DYNAMICLIGHTMAP_OFF pd= ok=1
