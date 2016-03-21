@@ -1,30 +1,34 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System;
+using UnityEngine;
 
-public class AdjacencyList<K>
+public class AdjacencyList : MonoBehaviour
 {
-	private List<List<K>> _vertexList = new List<List<K>>();
-	private Dictionary<K, List<K>> _vertexDict = new Dictionary<K, List<K>>();
+	private List<List<int>> _vertexList = new List<List<int>>();
+	private Dictionary<int, List<int>> _vertexDict = new Dictionary<int, List<int>>();
 
-	public AdjacencyList(K rootVertexKey)
+	// make a composite key for edges
+	public Dictionary<string, LineRenderer> _edgesToRender = new Dictionary<string, LineRenderer>();
+
+	public AdjacencyList(int rootVertexKey)
 	{
 		AddVertex(rootVertexKey);
 	}
 
-	private List<K> AddVertex(K key)
+	public List<int> AddVertex(int key)
 	{
-		List<K> vertex = new List<K>();
+		List<int> vertex = new List<int>();
 		_vertexList.Add(vertex);
 		_vertexDict.Add(key, vertex);
 
 		return vertex;
 	}
 
-	public void AddEdge(K startKey, K endKey)
+	public void AddEdge(int startKey, int endKey)
 	{      
-		List<K> startVertex = _vertexDict.ContainsKey(startKey) ? _vertexDict[startKey] : null;
-		List<K> endVertex = _vertexDict.ContainsKey(endKey) ? _vertexDict[endKey] : null;
+		List<int> startVertex = _vertexDict.ContainsKey(startKey) ? _vertexDict[startKey] : null;
+		List<int> endVertex = _vertexDict.ContainsKey(endKey) ? _vertexDict[endKey] : null;
 
 		if (startVertex == null)
 			throw new ArgumentException("Cannot create edge from a non-existent start vertex.");
@@ -34,17 +38,33 @@ public class AdjacencyList<K>
 
 		startVertex.Add(endKey);
 		endVertex.Add(startKey);
+
+		int smaller = endKey;
+		int bigger = startKey;
+		if (startKey < endKey) {
+			smaller = startKey;
+			bigger = endKey;
+		}
+
+		GameObject prefabLineToRender = Resources.Load("Line") as GameObject;
+		GameObject lineToRender = Instantiate (prefabLineToRender, new Vector3 (0, 0, 0), Quaternion.identity) as GameObject;
+		LineRenderer myLineRenderer = lineToRender.GetComponent<LineRenderer> ();
+
+		myLineRenderer.enabled = false;
+
+		string edgeKey = "" + smaller + "." + bigger;
+		_edgesToRender.Add (edgeKey, myLineRenderer);
 	}
 
-	public void RemoveVertex(K key)
+	public void RemoveVertex(int key)
 	{
-		List<K> vertex = _vertexDict[key];
+		List<int> vertex = _vertexDict[key];
 
 		//First remove the edges / adjacency entries
 		int vertexNumAdjacent = vertex.Count;
 		for (int i = 0; i < vertexNumAdjacent; i++)
 		{  
-			K neighbourVertexKey = vertex[i];
+			int neighbourVertexKey = vertex[i];
 			RemoveEdge(key, neighbourVertexKey);
 		}
 
@@ -53,33 +73,37 @@ public class AdjacencyList<K>
 		_vertexDict.Remove(key);
 	}
 
-	public void RemoveEdge(K startKey, K endKey)
+	public void RemoveEdge(int startKey, int endKey)
 	{
-		((List<K>)_vertexDict[startKey]).Remove(endKey);
-		((List<K>)_vertexDict[endKey]).Remove(startKey);
+		((List<int>)_vertexDict[startKey]).Remove(endKey);
+		((List<int>)_vertexDict[endKey]).Remove(startKey);
 	}
 
-	public bool Contains(K key)
+	public bool Contains(int key)
 	{
 		return _vertexDict.ContainsKey(key);
 	}
 
-	public List<K> GetEdgesForVertex(K key)
+	public List<int> GetEdgesForVertex(int key)
 	{
 		return _vertexDict[key];
 	}
 
-	public bool isAdjacent(K key1, K key2)
+	public bool isAdjacent(int key1, int key2)
 	{
-		List<K> edges = _vertexDict[key1];
-		if (edges.Contains (key2)) {
-			return true;
+		if (_vertexDict.ContainsKey (key1)) {
+			List<int> edges = _vertexDict [key1];
+			if (edges.Contains (key2)) {
+				return true;
+			} else {
+				return false;
+			}
 		} else {
 			return false;
 		}
 	}
 
-	public int VertexDegree(K key)
+	public int VertexDegree(int key)
 	{
 		return _vertexDict[key].Count;
 	}

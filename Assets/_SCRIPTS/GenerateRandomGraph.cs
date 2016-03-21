@@ -3,10 +3,13 @@ using System.Collections;
 
 public class GenerateRandomGraph : MonoBehaviour {
 
-	public float CHARGE_CONSTANT = 1000.0f;
-	public float SPRING_CONSTANT = 2.0f;
+	float CHARGE_CONSTANT = 100.0f;
+	float SPRING_CONSTANT = 2.0f;
 
-	AdjacencyList<int> adjacencyList = new AdjacencyList<int>(0);
+	float CHANCE_OF_CONNECTION = 0.03f;
+	int NUMBER_NODES = 20;
+
+	AdjacencyList adjacencyList = new AdjacencyList(0);
 
 	//GameObject[] myNodes;
 	//NodeForce[] myNodeForces;
@@ -16,41 +19,29 @@ public class GenerateRandomGraph : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 
-		int numNodes = 4;
+		masterNodeList = new Node[NUMBER_NODES];
 
-		masterNodeList = new Node[numNodes];
+		// add nodes
+		for (int i = 0; i < NUMBER_NODES; i++) {
+			if (i != 0) { adjacencyList.AddVertex (i);}
+			GameObject myNodeInstance = 
+				Instantiate (Resources.Load ("Node"),
+					new Vector3 (Random.Range (-10.0f, 10.0f) + 20.0f, Random.Range (-10.0f, 10.0f)+5.0f, Random.Range (-10.0f, 10.0f)),
+					Quaternion.identity) as GameObject;
+			masterNodeList [i] = new Node (myNodeInstance, i); 
+		}
 
-		GameObject myNodeInstance0 = 
-			Instantiate (Resources.Load ("Node"),
-			new Vector3(20.0f, 0.0f, 2.0f),
-			Quaternion.identity) as GameObject;
-		GameObject myNodeInstance1 = 
-			Instantiate (Resources.Load ("Node"),
-				new Vector3(20.0f, 0.0f, 4.0f),
-				Quaternion.identity) as GameObject;
-		GameObject myNodeInstance2 = 
-			Instantiate (Resources.Load ("Node"),
-				new Vector3(20.0f, 5.0f, 2.0f),
-				Quaternion.identity) as GameObject;
-		GameObject myNodeInstance3 = 
-			Instantiate (Resources.Load ("Node"),
-				new Vector3(20.0f, 8.0f, 6.0f),
-				Quaternion.identity) as GameObject;
 
-		Node myNode0 = new Node (myNodeInstance0, 0); //todo: auto-index?
-		Node myNode1 = new Node (myNodeInstance1, 1);
-		Node myNode2 = new Node (myNodeInstance2, 2);
-		Node myNode3 = new Node (myNodeInstance3, 3);
-
-		masterNodeList [0] = myNode0;
-		masterNodeList [1] = myNode1;
-		masterNodeList [2] = myNode2;
-		masterNodeList [3] = myNode3;
-
-		adjacencyList.AddEdge (0, 1);
-		adjacencyList.AddEdge (1, 2);
-		adjacencyList.AddEdge (2, 3);
-		adjacencyList.AddEdge (3, 0);
+		// populate adjacency
+		for (int i = 0; i < NUMBER_NODES; i++) {
+			for (int j = 0; j < NUMBER_NODES; j++) {
+				if (Random.Range (0.00f, 1.00f) < CHANCE_OF_CONNECTION) {
+					if (adjacencyList.isAdjacent (i, j) == false) {
+						adjacencyList.AddEdge (i, j);
+					}
+				}
+			}
+		}
 
 	}
 
@@ -96,11 +87,20 @@ public class GenerateRandomGraph : MonoBehaviour {
 						// print ("Number " + i + " and number " + j + " are adjacent.");
 						springForce = (SPRING_CONSTANT) * (distance);
 						// draw a line between the points if it exists
-						if (masterNodeList [i].nodeForce.myLineRenderer != null) {
-							masterNodeList [i].nodeForce.myLineRenderer.SetVertexCount (2);
-							masterNodeList [i].nodeForce.myLineRenderer.SetPosition (0, masterNodeList [i].gameObject.transform.position);
-							masterNodeList [i].nodeForce.myLineRenderer.SetPosition (1, masterNodeList [j].gameObject.transform.position);
+
+						int smaller = j;
+						int bigger = i;
+						if (i < j) {
+							smaller = i;
+							bigger = j;
 						}
+
+						LineRenderer myLineRenderer = adjacencyList._edgesToRender ["" + smaller + "." + bigger];
+						myLineRenderer.SetVertexCount (2);
+						myLineRenderer.SetPosition (0, masterNodeList [i].gameObject.transform.position);
+						myLineRenderer.SetPosition (1, masterNodeList [j].gameObject.transform.position);
+						myLineRenderer.enabled = true;
+
 					} else {
 						//print ("Number " + i + " and number " + j + " NOT ADJACENT.");
 					}
