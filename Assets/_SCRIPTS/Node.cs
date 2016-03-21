@@ -6,10 +6,10 @@ public class Node {
 	public NodeForce nodeForce;
 	public int index;
 
-	public Node(GameObject myGameObject, NodeForce myNodeForce, int myIndex)
+	public Node(GameObject myGameObject, int myIndex)
 	{
 		gameObject = myGameObject;
-		nodeForce = myNodeForce;
+		nodeForce = myGameObject.GetComponent<NodeForce> ();
 		index = myIndex;
 	}
 

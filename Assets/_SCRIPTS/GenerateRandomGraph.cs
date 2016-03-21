@@ -8,8 +8,8 @@ public class GenerateRandomGraph : MonoBehaviour {
 
 	AdjacencyList<int> adjacencyList = new AdjacencyList<int>(0);
 
-	GameObject[] myNodes;
-	NodeForce[] myNodeForces;
+	//GameObject[] myNodes;
+	//NodeForce[] myNodeForces;
 
 	Node[] masterNodeList;
 
@@ -17,9 +17,6 @@ public class GenerateRandomGraph : MonoBehaviour {
 	void Start () {
 
 		int numNodes = 4;
-
-		myNodes = new GameObject[numNodes];
-		myNodeForces = new NodeForce[numNodes];
 
 		masterNodeList = new Node[numNodes];
 
@@ -40,20 +37,10 @@ public class GenerateRandomGraph : MonoBehaviour {
 				new Vector3(20.0f, 8.0f, 6.0f),
 				Quaternion.identity) as GameObject;
 
-		myNodes [0] = myNodeInstance0;
-		myNodes [1] = myNodeInstance1;
-		myNodes [2] = myNodeInstance2;
-		myNodes [3] = myNodeInstance3;
-
-		myNodeForces [0] = myNodeInstance0.GetComponent<NodeForce>();
-		myNodeForces [1] = myNodeInstance1.GetComponent<NodeForce>();
-		myNodeForces [2] = myNodeInstance2.GetComponent<NodeForce>();
-		myNodeForces [3] = myNodeInstance3.GetComponent<NodeForce>();
-
-		Node myNode0 = new Node (myNodes[0], myNodeForces[0],0);
-		Node myNode1 = new Node (myNodes[1], myNodeForces[1],1);
-		Node myNode2 = new Node (myNodes[2], myNodeForces[2],2);
-		Node myNode3 = new Node (myNodes[3], myNodeForces[3],3);
+		Node myNode0 = new Node (myNodeInstance0, 0); //todo: auto-index?
+		Node myNode1 = new Node (myNodeInstance1, 1);
+		Node myNode2 = new Node (myNodeInstance2, 2);
+		Node myNode3 = new Node (myNodeInstance3, 3);
 
 		masterNodeList [0] = myNode0;
 		masterNodeList [1] = myNode1;
@@ -73,17 +60,17 @@ public class GenerateRandomGraph : MonoBehaviour {
 		// render lines
 
 		// do forces
-		for (int i = 0; i < myNodes.Length; i++) {
-			for (int j = 0; j < myNodes.Length; j++) {
+		for (int i = 0; i < masterNodeList.Length; i++) {
+			for (int j = 0; j < masterNodeList.Length; j++) {
 				if (i != j) {
 					// apply force
 					// there should only be one interaction for each
 					// force = constant * absolute(myNodes[i].charge * myNodes[j].charge)/square(distance(myNodes[i], myNodes[j]))
 
 					// CALC REPULSIVE FORCE
-					float distance = Vector3.Distance (myNodes [i].transform.position, myNodes [j].transform.position); 
+					float distance = Vector3.Distance (masterNodeList [i].gameObject.transform.position, masterNodeList [j].gameObject.transform.position); 
 
-					float chargeForce = (CHARGE_CONSTANT) * ((myNodeForces [i].charge * myNodeForces [j].charge) / (distance * distance));
+					float chargeForce = (CHARGE_CONSTANT) * ((masterNodeList [i].nodeForce.charge * masterNodeList [j].nodeForce.charge) / (distance * distance));
 					//print ("force: " + force);
 					//float accel = force / myNodeForces[i].mass;
 
@@ -109,10 +96,10 @@ public class GenerateRandomGraph : MonoBehaviour {
 						// print ("Number " + i + " and number " + j + " are adjacent.");
 						springForce = (SPRING_CONSTANT) * (distance);
 						// draw a line between the points if it exists
-						if (myNodeForces [i].myLineRenderer != null) {
-							myNodeForces [i].myLineRenderer.SetVertexCount (2);
-							myNodeForces [i].myLineRenderer.SetPosition (0, myNodes [i].transform.position);
-							myNodeForces [i].myLineRenderer.SetPosition (1, myNodes [j].transform.position);
+						if (masterNodeList [i].nodeForce.myLineRenderer != null) {
+							masterNodeList [i].nodeForce.myLineRenderer.SetVertexCount (2);
+							masterNodeList [i].nodeForce.myLineRenderer.SetPosition (0, masterNodeList [i].gameObject.transform.position);
+							masterNodeList [i].nodeForce.myLineRenderer.SetPosition (1, masterNodeList [j].gameObject.transform.position);
 						}
 					} else {
 						//print ("Number " + i + " and number " + j + " NOT ADJACENT.");
@@ -120,14 +107,14 @@ public class GenerateRandomGraph : MonoBehaviour {
 
 					float totalForce = chargeForce - springForce; //only if they're in the same direction
 
-					float accel = totalForce / myNodeForces [i].mass;
+					float accel = totalForce / masterNodeList[i].nodeForce.mass;
 					float distanceChange = /* v0*t */ 0.5f * (accel) * (Time.deltaTime) * (Time.deltaTime);
 
-					Vector3 direction = myNodes[i].transform.position - myNodes[j].transform.position;
+					Vector3 direction = masterNodeList[i].gameObject.transform.position - masterNodeList[j].gameObject.transform.position;
 
 					// apply it
-					Vector3 newPositionForI = myNodes[i].transform.position + direction.normalized * distanceChange;
-					myNodes [i].transform.position = newPositionForI;
+					Vector3 newPositionForI = masterNodeList[i].gameObject.transform.position + direction.normalized * distanceChange;
+					masterNodeList [i].gameObject.transform.position = newPositionForI;
 
 					// put in something to dampen it and stop calculations after it settles down
 					// TODO
