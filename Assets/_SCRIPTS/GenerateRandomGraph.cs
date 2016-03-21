@@ -6,7 +6,7 @@ public class GenerateRandomGraph : MonoBehaviour {
 	float CHARGE_CONSTANT = 100.0f;
 	float SPRING_CONSTANT = 2.0f;
 
-	float CHANCE_OF_CONNECTION = 0.03f;
+	float CHANCE_OF_CONNECTION = 0.09f;
 	int NUMBER_NODES = 20;
 
 	AdjacencyList adjacencyList = new AdjacencyList(0);
@@ -47,6 +47,8 @@ public class GenerateRandomGraph : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
+
+		// update only one per frame? don't update every node every frame
 
 		// render lines
 
