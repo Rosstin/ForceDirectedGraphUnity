@@ -7,7 +7,7 @@ using System.Collections;
 
 public class GenerateRandomGraph : MonoBehaviour {
 
-	float CHARGE_CONSTANT = 10000.0f;
+	float CHARGE_CONSTANT = 1000.0f;
 	float SPRING_CONSTANT = 2.0f;
 
 	float CHANCE_OF_CONNECTION = 0.09f;
@@ -15,7 +15,7 @@ public class GenerateRandomGraph : MonoBehaviour {
 
 	int NODES_PROCESSED_PER_FRAME = 10; // could also do as a percentage, could have some logic for that, or the max number that can be done
 
-	float DISTANCE_FROM_FACE = 10.0f;
+	float DISTANCE_FROM_FACE = 1.0f;
 	float NODE_SPREAD = 10.0f;
 
 	int currentIndex = 0;
@@ -28,7 +28,8 @@ public class GenerateRandomGraph : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		generateGraphFromCSV ();
+		//generateGraphFromCSV ();
+		generateGraphRandomly();
 	}
 
 	void generateGraphFromCSV(){
