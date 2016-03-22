@@ -50,6 +50,12 @@ public class AdjacencyList : MonoBehaviour
 		GameObject lineToRender = Instantiate (prefabLineToRender, new Vector3 (0, 0, 0), Quaternion.identity) as GameObject;
 		LineRenderer myLineRenderer = lineToRender.GetComponent<LineRenderer> ();
 
+		if ( UnityEngine.Random.Range (0.0f, 1.0f) < 0.50f) {
+			myLineRenderer.SetColors (Color.blue, Color.cyan);
+		} else {
+			myLineRenderer.SetColors (Color.red, Color.magenta);
+		}
+
 		myLineRenderer.enabled = false;
 
 		string edgeKey = "" + smaller + "." + bigger;

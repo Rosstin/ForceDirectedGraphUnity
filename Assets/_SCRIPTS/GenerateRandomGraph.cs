@@ -1,6 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+// TODO: read in the data
+// TODO: improve speed/performance, only update a subset of the nodes each call
+// TODO: 
+
 public class GenerateRandomGraph : MonoBehaviour {
 
 	float CHARGE_CONSTANT = 100.0f;
@@ -9,10 +13,14 @@ public class GenerateRandomGraph : MonoBehaviour {
 	float CHANCE_OF_CONNECTION = 0.09f;
 	int NUMBER_NODES = 20;
 
-	AdjacencyList adjacencyList = new AdjacencyList(0);
+	int NODES_PROCESSED_PER_FRAME = 10; // could also do as a percentage, could have some logic for that, or the max number that can be done
 
-	//GameObject[] myNodes;
-	//NodeForce[] myNodeForces;
+	float DISTANCE_FROM_FACE = 10.0f;
+
+	int currentIndex = 0;
+
+
+	AdjacencyList adjacencyList = new AdjacencyList(0);
 
 	Node[] masterNodeList;
 
@@ -26,7 +34,7 @@ public class GenerateRandomGraph : MonoBehaviour {
 			if (i != 0) { adjacencyList.AddVertex (i);}
 			GameObject myNodeInstance = 
 				Instantiate (Resources.Load ("Node"),
-					new Vector3 (Random.Range (-10.0f, 10.0f) + 20.0f, Random.Range (-10.0f, 10.0f)+5.0f, Random.Range (-10.0f, 10.0f)),
+					new Vector3 (Random.Range (-10.0f, 10.0f) + DISTANCE_FROM_FACE, Random.Range (-10.0f, 10.0f)+5.0f, Random.Range (-10.0f, 10.0f)),
 					Quaternion.identity) as GameObject;
 			masterNodeList [i] = new Node (myNodeInstance, i); 
 		}
@@ -45,85 +53,76 @@ public class GenerateRandomGraph : MonoBehaviour {
 
 	}
 
+	void applyForcesBetweenTwoNodes(int i, int j){
+		// apply force
+		// there should only be one interaction for each
+		// force = constant * absolute(myNodes[i].charge * myNodes[j].charge)/square(distance(myNodes[i], myNodes[j]))
+
+		// CALC REPULSIVE FORCE
+		float distance = Vector3.Distance (masterNodeList [i].gameObject.transform.position, masterNodeList [j].gameObject.transform.position); 
+
+		float chargeForce = (CHARGE_CONSTANT) * ((masterNodeList [i].nodeForce.charge * masterNodeList [j].nodeForce.charge) / (distance * distance));
+
+		float springForce = 0;
+		if (adjacencyList.isAdjacent (i, j)) {
+			// print ("Number " + i + " and number " + j + " are adjacent.");
+			springForce = (SPRING_CONSTANT) * (distance);
+			// draw a line between the points if it exists
+
+			int smaller = j;
+			int bigger = i;
+			if (i < j) {
+				smaller = i;
+				bigger = j;
+			}
+
+			string key = "" + smaller + "." + bigger;
+
+			//print ("key: " + key);
+
+			LineRenderer myLineRenderer = adjacencyList._edgesToRender [key];
+			myLineRenderer.SetVertexCount (2);
+			myLineRenderer.SetPosition (0, masterNodeList [smaller].gameObject.transform.position);
+			myLineRenderer.SetPosition (1, masterNodeList [bigger].gameObject.transform.position);
+			myLineRenderer.enabled = true;
+		} else {
+			//print ("Number " + i + " and number " + j + " NOT ADJACENT.");
+		}
+
+		float totalForce = chargeForce - springForce; //only if they're in the same direction
+
+		float accel = totalForce / masterNodeList [i].nodeForce.mass;
+		float distanceChange = /* v0*t */ 0.5f * (accel) * (Time.deltaTime) * (Time.deltaTime);
+
+		Vector3 direction = masterNodeList [i].gameObject.transform.position - masterNodeList [j].gameObject.transform.position;
+
+		// apply it
+		Vector3 newPositionForI = masterNodeList [i].gameObject.transform.position + direction.normalized * distanceChange;
+		masterNodeList [i].gameObject.transform.position = newPositionForI;
+
+		// put in something to dampen it and stop calculations after it settles down
+		// TODO
+	}
+
 	// Update is called once per frame
 	void Update () {
 
 		// update only one per frame? don't update every node every frame
-
 		// render lines
-
-		// do forces
-		for (int i = 0; i < masterNodeList.Length; i++) {
+		int nodesProcessedThisFrame = 0;
+		while( nodesProcessedThisFrame < NODES_PROCESSED_PER_FRAME){
+			nodesProcessedThisFrame += 1;
+			currentIndex += 1;
+			if (currentIndex >= masterNodeList.Length) {
+				currentIndex = 0;
+			}
+			int i = currentIndex;
 			for (int j = 0; j < masterNodeList.Length; j++) {
 				if (i != j) {
-					// apply force
-					// there should only be one interaction for each
-					// force = constant * absolute(myNodes[i].charge * myNodes[j].charge)/square(distance(myNodes[i], myNodes[j]))
-
-					// CALC REPULSIVE FORCE
-					float distance = Vector3.Distance (masterNodeList [i].gameObject.transform.position, masterNodeList [j].gameObject.transform.position); 
-
-					float chargeForce = (CHARGE_CONSTANT) * ((masterNodeList [i].nodeForce.charge * masterNodeList [j].nodeForce.charge) / (distance * distance));
-					//print ("force: " + force);
-					//float accel = force / myNodeForces[i].mass;
-
-					//float distanceChange = /* v0*t */ 0.5f * (accel) * (Time.deltaTime) * (Time.deltaTime);
-
-					// direction
-					//Vector3 direction = myNodes[i].transform.position - myNodes[j].transform.position;
-
-					// apply it
-					//Vector3 newPositionForI = myNodes[i].transform.position + direction.normalized * distanceChange;
-					//myNodes [i].transform.position = newPositionForI;
-
-					// CALC ATTRACTIVE FORCE, only if they are springed
-					// now use Hooke's Law for spring attraction to pull them back together
-					// F = kx
-
-					// if these nodes are connected
-
-					// maybe i should do this per node and get all the forces and sum them first, in the previous for-loop
-
-					float springForce = 0;
-					if (adjacencyList.isAdjacent (i, j)) {
-						// print ("Number " + i + " and number " + j + " are adjacent.");
-						springForce = (SPRING_CONSTANT) * (distance);
-						// draw a line between the points if it exists
-
-						int smaller = j;
-						int bigger = i;
-						if (i < j) {
-							smaller = i;
-							bigger = j;
-						}
-
-						LineRenderer myLineRenderer = adjacencyList._edgesToRender ["" + smaller + "." + bigger];
-						myLineRenderer.SetVertexCount (2);
-						myLineRenderer.SetPosition (0, masterNodeList [i].gameObject.transform.position);
-						myLineRenderer.SetPosition (1, masterNodeList [j].gameObject.transform.position);
-						myLineRenderer.enabled = true;
-
-					} else {
-						//print ("Number " + i + " and number " + j + " NOT ADJACENT.");
-					}
-
-					float totalForce = chargeForce - springForce; //only if they're in the same direction
-
-					float accel = totalForce / masterNodeList[i].nodeForce.mass;
-					float distanceChange = /* v0*t */ 0.5f * (accel) * (Time.deltaTime) * (Time.deltaTime);
-
-					Vector3 direction = masterNodeList[i].gameObject.transform.position - masterNodeList[j].gameObject.transform.position;
-
-					// apply it
-					Vector3 newPositionForI = masterNodeList[i].gameObject.transform.position + direction.normalized * distanceChange;
-					masterNodeList [i].gameObject.transform.position = newPositionForI;
-
-					// put in something to dampen it and stop calculations after it settles down
-					// TODO
-
-
+					applyForcesBetweenTwoNodes (i, j);
 				}
 			}
 		}
 	}
+
 }
