@@ -136,12 +136,14 @@
      <Compile Include="Assets\LeapMotion\Scripts\VR\LeapVRTemporalWarping.cs" />
      <Compile Include="Assets\LeapMotion\Scripts\VR\TemporalWarpingStatus.cs" />
      <Compile Include="Assets\_SCRIPTS\AdjacencyList.cs" />
+     <Compile Include="Assets\_SCRIPTS\CSVReader.cs" />
      <Compile Include="Assets\_SCRIPTS\GenerateRandomGraph.cs" />
      <Compile Include="Assets\_SCRIPTS\Node.cs" />
      <Compile Include="Assets\_SCRIPTS\NodeForce.cs" />
      <None Include="Assets\Plugins\donotdelete.txt" />
      <None Include="Assets\LeapMotion\Resources\LeapCG.cginc" />
      <None Include="Assets\LeapMotion\README_BEFORE_UPDATING.txt" />
+     <None Include="Assets\Resources\L.txt" />
      <None Include="Assets\LeapMotion\readme.txt" />
      <None Include="Assets\LeapMotion\Resources\ImageHandHighlight.shader" />
      <None Include="Assets\LeapMotion\Shaders\RimShading.shader" />

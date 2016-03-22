@@ -7,7 +7,7 @@ using System.Collections;
 
 public class GenerateRandomGraph : MonoBehaviour {
 
-	float CHARGE_CONSTANT = 100.0f;
+	float CHARGE_CONSTANT = 10000.0f;
 	float SPRING_CONSTANT = 2.0f;
 
 	float CHANCE_OF_CONNECTION = 0.09f;
@@ -16,9 +16,11 @@ public class GenerateRandomGraph : MonoBehaviour {
 	int NODES_PROCESSED_PER_FRAME = 10; // could also do as a percentage, could have some logic for that, or the max number that can be done
 
 	float DISTANCE_FROM_FACE = 10.0f;
+	float NODE_SPREAD = 10.0f;
 
 	int currentIndex = 0;
 
+	int highestNode = 0;
 
 	AdjacencyList adjacencyList = new AdjacencyList(0);
 
@@ -26,31 +28,101 @@ public class GenerateRandomGraph : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		generateGraphFromCSV ();
+	}
 
+	void generateGraphFromCSV(){
+		print ("readCSVData");
+		TextAsset text = Resources.Load ("L") as TextAsset;
+		string[,] outputGrid = CSVReader.SplitCsvGrid (text.text);
+
+		int numberOfEdges = outputGrid.GetUpperBound(1);
+
+
+		// find the highest node
+		for (int i = 1; i < numberOfEdges; i++) {
+			float source = float.Parse(outputGrid [0,i]); // source
+			float target = float.Parse(outputGrid [1,i]); // target
+			// change it so that it ignores the last newline in a file
+
+			int s = (int) source;
+			int t = (int) target;
+
+			if (s > highestNode) {
+				highestNode = s;
+			}
+
+			if (t > highestNode) {
+				highestNode = t;
+			}
+
+			//Debug.Log ("outputGrid[0,i]: " + outputGrid[0,i] + "... " + "outputGrid[1,i]: " + outputGrid[1,i]);
+		}
+
+		masterNodeList = new Node[highestNode];
+
+		// add nodes
+		randomlyPlaceNodes ();
+
+		// add edges
+		for (int i = 1; i < numberOfEdges; i++) {
+
+			//Debug.Log ("outputGrid[0,i]: " + outputGrid[0,i] + "... " + "outputGrid[1,i]: " + outputGrid[1,i]);
+
+			float source = float.Parse(outputGrid [0,i]); // source
+			float target = float.Parse(outputGrid [1,i]); // target
+
+			int s = (int) source;
+			int t = (int) target;
+
+			addEdgeToAdjacencyListAfterValidation (s, t);
+		}
+
+	}
+
+	void generateGraphRandomly(){
 		masterNodeList = new Node[NUMBER_NODES];
 
 		// add nodes
-		for (int i = 0; i < NUMBER_NODES; i++) {
-			if (i != 0) { adjacencyList.AddVertex (i);}
-			GameObject myNodeInstance = 
-				Instantiate (Resources.Load ("Node"),
-					new Vector3 (Random.Range (-10.0f, 10.0f) + DISTANCE_FROM_FACE, Random.Range (-10.0f, 10.0f)+5.0f, Random.Range (-10.0f, 10.0f)),
-					Quaternion.identity) as GameObject;
-			masterNodeList [i] = new Node (myNodeInstance, i); 
-		}
-
+		randomlyPlaceNodes();
 
 		// populate adjacency
 		for (int i = 0; i < NUMBER_NODES; i++) {
 			for (int j = 0; j < NUMBER_NODES; j++) {
 				if (Random.Range (0.00f, 1.00f) < CHANCE_OF_CONNECTION) {
-					if (adjacencyList.isAdjacent (i, j) == false) {
-						adjacencyList.AddEdge (i, j);
-					}
+					addEdgeToAdjacencyListAfterValidation (i, j);
 				}
 			}
 		}
+	}
 
+	void randomlyPlaceNodes(){ //also adds vertexes to adjacencylist
+		int numNodes = masterNodeList.Length;
+		// add nodes
+		for (int i = 0; i < numNodes; i++) {
+
+			// add vertexes
+			if (i != 0) { adjacencyList.AddVertex (i);}
+
+			GameObject myNodeInstance = 
+				Instantiate (Resources.Load ("Node"),
+					new Vector3 (Random.Range (-NODE_SPREAD, NODE_SPREAD), Random.Range (-NODE_SPREAD, NODE_SPREAD)+5.0f, Random.Range (-NODE_SPREAD, NODE_SPREAD)-DISTANCE_FROM_FACE),
+					Quaternion.identity) as GameObject;
+			masterNodeList [i] = new Node (myNodeInstance, i); 
+		}
+	}
+
+	void addEdgeToAdjacencyListAfterValidation(int source, int target){
+		int smaller = source;
+		int bigger = target;
+		if (target < source) {
+			smaller = target;
+			bigger = source;
+		}
+
+		if (adjacencyList.isAdjacent (smaller, bigger) == false) {
+			adjacencyList.AddEdge (smaller, bigger);
+		}
 	}
 
 	void applyForcesBetweenTwoNodes(int i, int j){
@@ -109,6 +181,7 @@ public class GenerateRandomGraph : MonoBehaviour {
 
 		// update only one per frame? don't update every node every frame
 		// render lines
+
 		int nodesProcessedThisFrame = 0;
 		while( nodesProcessedThisFrame < NODES_PROCESSED_PER_FRAME){
 			nodesProcessedThisFrame += 1;
