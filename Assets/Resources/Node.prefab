@@ -12,9 +12,10 @@ GameObject:
   - 135: {fileID: 13576660}
   - 23: {fileID: 2376038}
   - 114: {fileID: 11408648}
+  - 114: {fileID: 11496614}
   m_Layer: 0
   m_Name: Node
-  m_TagString: Untagged
+  m_TagString: Draggable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -75,10 +76,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2c0abc443fecc64bb0f7ee2e36aff90, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lineToRender: {fileID: 0}
-  myLineRenderer: {fileID: 0}
   charge: 1
   mass: 1
+--- !u!114 &11496614
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 163410}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff622da5a9d48d546bb422e747957d59, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!135 &13576660
 SphereCollider:
   m_ObjectHideFlags: 1
@@ -97,7 +107,11 @@ Prefab:
   serializedVersion: 2
   m_Modification:
     m_TransformParent: {fileID: 0}
-    m_Modifications: []
+    m_Modifications:
+    - target: {fileID: 0}
+      propertyPath: m_TagString
+      value: Draggable
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 163410}

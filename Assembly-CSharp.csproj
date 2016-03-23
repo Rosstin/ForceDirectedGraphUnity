@@ -137,7 +137,9 @@
      <Compile Include="Assets\LeapMotion\Scripts\VR\TemporalWarpingStatus.cs" />
      <Compile Include="Assets\_SCRIPTS\AdjacencyList.cs" />
      <Compile Include="Assets\_SCRIPTS\CSVReader.cs" />
+     <Compile Include="Assets\_SCRIPTS\Draggable.cs" />
      <Compile Include="Assets\_SCRIPTS\GenerateRandomGraph.cs" />
+     <Compile Include="Assets\_SCRIPTS\MouseRaycast.cs" />
      <Compile Include="Assets\_SCRIPTS\Node.cs" />
      <Compile Include="Assets\_SCRIPTS\NodeForce.cs" />
      <None Include="Assets\Plugins\donotdelete.txt" />
