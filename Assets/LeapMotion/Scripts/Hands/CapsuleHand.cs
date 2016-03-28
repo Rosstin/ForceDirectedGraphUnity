@@ -38,6 +38,8 @@ public class CapsuleHand : IHandModel {
   private Transform armFrontLeft, armFrontRight, armBackLeft, armBackRight;
   private Hand hand_;
 
+  public Transform pointerTip;
+
   public override ModelType HandModelType {
     get {
       return ModelType.Graphics;
@@ -110,7 +112,6 @@ public class CapsuleHand : IHandModel {
         int key = getFingerJointIndex((int)finger.Type, j);
         Transform sphere = _jointSpheres[key];
         sphere.position = finger.JointPosition((Finger.FingerJoint)j).ToUnityScaled();
-
       }
     }
 
@@ -190,6 +191,12 @@ public class CapsuleHand : IHandModel {
       for (int j = 0; j < 4; j++) {
         int key = getFingerJointIndex((int)finger.Type, j);
         _jointSpheres[key] = createSphere("Joint", SPHERE_RADIUS);
+
+		if (j == 3 && i == 1) { // make the pointer finger tip black
+			_jointSpheres[key].GetComponent<MeshRenderer> ().material.color = Color.black;
+			pointerTip = _jointSpheres [key];
+		}
+
       }
     }
 

@@ -13,9 +13,9 @@ public class GenerateRandomGraph : MonoBehaviour {
 	float CHANCE_OF_CONNECTION = 0.09f;
 	int NUMBER_NODES = 20;
 
-	int NODES_PROCESSED_PER_FRAME = 10; // could also do as a percentage, could have some logic for that, or the max number that can be done
+	int NODES_PROCESSED_PER_FRAME = 5; // could also do as a percentage, could have some logic for that, or the max number that can be done
 
-	float DISTANCE_FROM_FACE = 40.0f;
+	float DISTANCE_FROM_FACE = 20.0f;
 	float NODE_SPREAD = 10.0f;
 
 	int currentIndex = 0;
@@ -28,8 +28,8 @@ public class GenerateRandomGraph : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		generateGraphFromCSV ();
-		//generateGraphRandomly();
+		//generateGraphFromCSV ();
+		generateGraphRandomly();
 	}
 
 	void generateGraphFromCSV(){
@@ -107,7 +107,7 @@ public class GenerateRandomGraph : MonoBehaviour {
 
 			GameObject myNodeInstance = 
 				Instantiate (Resources.Load ("Node"),
-					new Vector3 (Random.Range (-NODE_SPREAD, NODE_SPREAD)-DISTANCE_FROM_FACE, Random.Range (-NODE_SPREAD, NODE_SPREAD)+5.0f, Random.Range (-NODE_SPREAD, NODE_SPREAD)),
+					new Vector3 (Random.Range (-NODE_SPREAD, NODE_SPREAD), Random.Range (-NODE_SPREAD, NODE_SPREAD)+5.0f, Random.Range (-NODE_SPREAD, NODE_SPREAD)+DISTANCE_FROM_FACE),
 					Quaternion.identity) as GameObject;
 			masterNodeList [i] = new Node (myNodeInstance, i); 
 		}
@@ -126,7 +126,7 @@ public class GenerateRandomGraph : MonoBehaviour {
 		}
 	}
 
-	void applyForcesBetweenTwoNodes(int i, int j){
+	void applyForcesBetweenTwoNodes(int i, int j){ // and render the lines
 		// apply force
 		// there should only be one interaction for each
 		// force = constant * absolute(myNodes[i].charge * myNodes[j].charge)/square(distance(myNodes[i], myNodes[j]))
